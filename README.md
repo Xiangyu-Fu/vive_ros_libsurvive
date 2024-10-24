@@ -35,5 +35,5 @@ catkin build
 ## Usage
 1. Run the libsurvive node
 ```bash
-rosrun libsurvive_pub libsurvive_pub_node
+rosrun vive_ros_libsurvive libsurvive_pub_node
 ```

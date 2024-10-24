@@ -1,45 +1,30 @@
+// libsurvive_cli.cpp
 #include <survive.h>
-#include <ros/ros.h>
-#include <std_msgs/String.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <std_msgs/Bool.h>
-
-// Flag to keep the loop running
-static volatile int keepRunning = 1;
-
-#ifdef __linux__
-
-#include <assert.h>
 #include <signal.h>
 #include <stdlib.h>
 
+static volatile int keepRunning = 1;
+
+#ifdef __linux__
 void intHandler(int dummy) {
   if (keepRunning == 0)
     exit(-1);
   keepRunning = 0;
 }
-
 #endif
 
 // Button callback function
 SURVIVE_EXPORT void button_process(SurviveObject *so, enum SurviveInputEvent eventType, enum SurviveButton buttonId,
                                    const enum SurviveAxis *axisIds, const SurviveAxisVal_t *axisVals) {
-  ROS_INFO("Button event: Object %s, Button %d", so->serial_number, buttonId);  // Replaced survive_object_name with so->serial_number
+  printf("Button event: Object %s, Button %d\n", so->serial_number, buttonId);  // Simple print for standalone CLI
 }
 
-int main(int argc, char **argv) {
+int runLibsurvive(int argc, char **argv) {
 #ifdef __linux__
   signal(SIGINT, intHandler);
   signal(SIGTERM, intHandler);
   signal(SIGKILL, intHandler);
 #endif
-
-  // Initialize ROS
-  ros::init(argc, argv, "survive_pub_node");
-  ros::NodeHandle nh;
-
-  // Publishers
-  ros::Publisher button_pub = nh.advertise<std_msgs::Bool>("survive/button_event", 10);
 
   // Initialize libsurvive
   SurviveContext *ctx = survive_init(argc, argv);
@@ -52,14 +37,11 @@ int main(int argc, char **argv) {
   // Install button handler
   survive_install_button_fn(ctx, button_process);
 
-  // Main loop: Poll libsurvive and publish data
-  ros::Rate loop_rate(100); // 100 Hz
-  while (ros::ok() && keepRunning && survive_poll(ctx) == 0) {
-    ros::spinOnce();
-    loop_rate.sleep();
+  // Poll loop
+  while (keepRunning && survive_poll(ctx) == 0) {
   }
 
-  // Clean up and close libsurvive
+  // Clean up
   survive_close(ctx);
   return 0;
 }

@@ -1,3 +1,3 @@
 <launch>
-  <node name="libsurvive_pub_node" pkg="libsurvive_pub" type="libsurvive_pub_node" output="screen"/>
+  <node name="vive_ros_libsurvive" pkg="vive_ros_libsurvive" type="vive_ros_libsurvive_node" output="screen"/>
 </launch>

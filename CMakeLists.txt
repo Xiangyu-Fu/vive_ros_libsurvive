@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(libsurvive_pub)
+project(vive_ros_libsurvive)
 
 ## Find catkin and any catkin packages
 find_package(catkin REQUIRED COMPONENTS 
@@ -30,7 +30,7 @@ include_directories(
 
 link_directories(~/repos/libsurvive/bin)
 
-add_executable(${PROJECT_NAME}_node src/libsurvive_pub_node.cc)
+add_executable(${PROJECT_NAME}_node src/applications/libsurvive_pub_node.cpp)
 target_link_libraries(${PROJECT_NAME}_node 
 	${catkin_LIBRARIES}
 	survive
