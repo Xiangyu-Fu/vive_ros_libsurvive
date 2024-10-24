@@ -28,3 +28,12 @@ make
 ```bash
 cd ~/your_ws/src
 git clone
+cd ..
+catkin build
+```
+
+## Usage
+1. Run the libsurvive node
+```bash
+rosrun libsurvive_pub libsurvive_pub_node
+```
