@@ -1,7 +1,12 @@
-# HTC VIVE ROS
+# HTC VIVE ROS [still in development]
 This is a ROS package for HTC VIVE. It is based on the [libsurvive](https://github.com/cntools/libsurvive) library.
 
-Advantages:
+TODOs:
+- [ ] add  RViz visualization
+- [ ] add more publish topics
+
+
+### Advantages:
 - No need for SteamVR
 - simple setup
 - ...
