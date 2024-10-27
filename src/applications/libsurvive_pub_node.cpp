@@ -5,6 +5,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/String.h>
+#include <unordered_map> 
 
 // Keep the node running
 static volatile int keepRunning = 1;
@@ -41,6 +42,7 @@ int main(int argc, char **argv) {
     // Publishers for Pose and Button Events
     ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("survive/pose", 10);
     ros::Publisher button_pub = nh.advertise<std_msgs::String>("survive/button_event", 10);
+    std::unordered_map<std::string, ros::Publisher> pose_publishers; 
 
     // Initialize libsurvive with logging
     SurviveSimpleContext *actx = survive_simple_init_with_logger(argc, argv, log_fn);
@@ -57,6 +59,7 @@ int main(int argc, char **argv) {
     struct SurviveSimpleEvent event = {};
     while (ros::ok() && keepRunning && survive_simple_wait_for_event(actx, &event) != SurviveSimpleEventType_Shutdown) {
         switch (event.event_type) {
+            //TODO: Check if the published topic is correct
             case SurviveSimpleEventType_PoseUpdateEvent: {
                 const struct SurviveSimplePoseUpdatedEvent *pose_event = survive_simple_get_pose_updated_event(&event);
                 SurvivePose pose = pose_event->pose;
@@ -113,6 +116,8 @@ int main(int argc, char **argv) {
 
             case SurviveSimpleEventType_None:
                 break;
+            
+            //TODO: Check if we need to publish the velocity of the object
         }
 
         ros::spinOnce();
