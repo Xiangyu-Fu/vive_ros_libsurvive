@@ -5,7 +5,6 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/String.h>
-#include <unordered_map> 
 
 // Keep the node running
 static volatile int keepRunning = 1;
@@ -40,9 +39,8 @@ int main(int argc, char **argv) {
     ros::NodeHandle nh;
 
     // Publishers for Pose and Button Events
-    ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("survive/pose", 10);
-    ros::Publisher button_pub = nh.advertise<std_msgs::String>("survive/button_event", 10);
-    std::unordered_map<std::string, ros::Publisher> pose_publishers; 
+    ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("survive/pose", 50);
+    ros::Publisher button_pub = nh.advertise<std_msgs::String>("survive/button_event", 50);
 
     // Initialize libsurvive with logging
     SurviveSimpleContext *actx = survive_simple_init_with_logger(argc, argv, log_fn);
@@ -64,8 +62,6 @@ int main(int argc, char **argv) {
                 const struct SurviveSimplePoseUpdatedEvent *pose_event = survive_simple_get_pose_updated_event(&event);
                 SurvivePose pose = pose_event->pose;
                 const char* object_name = survive_simple_object_name(pose_event->object);
-                // to string
-                std::string object_name_str = object_name;
 
                 // ROS_INFO("(%f) %s Pos: %f %f %f Rot: %f %f %f %f", pose_event->time, object_name, pose.Pos[0], pose.Pos[1],
                 //          pose.Pos[2], pose.Rot[0], pose.Rot[1], pose.Rot[2], pose.Rot[3]);
@@ -73,7 +69,7 @@ int main(int argc, char **argv) {
                 // Publish Pose
                 geometry_msgs::PoseStamped pose_msg;
                 pose_msg.header.stamp = ros::Time::now();
-                // pose_msg.header.frame_id = object_name_str;
+                pose_msg.header.frame_id = object_name;
                 pose_msg.pose.position.x = pose.Pos[0];
                 pose_msg.pose.position.y = pose.Pos[1];
                 pose_msg.pose.position.z = pose.Pos[2];
