@@ -5,6 +5,7 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/String.h>
+#include <unordered_map> 
 
 // Keep the node running
 static volatile int keepRunning = 1;
@@ -41,6 +42,7 @@ int main(int argc, char **argv) {
     // Publishers for Pose and Button Events
     ros::Publisher pose_pub = nh.advertise<geometry_msgs::PoseStamped>("survive/pose", 10);
     ros::Publisher button_pub = nh.advertise<std_msgs::String>("survive/button_event", 10);
+    std::unordered_map<std::string, ros::Publisher> pose_publishers; 
 
     // Initialize libsurvive with logging
     SurviveSimpleContext *actx = survive_simple_init_with_logger(argc, argv, log_fn);
@@ -57,13 +59,27 @@ int main(int argc, char **argv) {
     struct SurviveSimpleEvent event = {};
     while (ros::ok() && keepRunning && survive_simple_wait_for_event(actx, &event) != SurviveSimpleEventType_Shutdown) {
         switch (event.event_type) {
+            //TODO: Check if the published topic is correct
             case SurviveSimpleEventType_PoseUpdateEvent: {
                 const struct SurviveSimplePoseUpdatedEvent *pose_event = survive_simple_get_pose_updated_event(&event);
                 SurvivePose pose = pose_event->pose;
+                FLT timecode = pose_event->time;
 
-                // Publish Pose
+                // Retrieve the object’s name to differentiate between different devices
+                const char* object_name = survive_simple_object_name(pose_event->object);
+
+                // Create a unique topic name for each object
+                std::string topic_name = std::string("survive/pose/") + object_name;
+
+                // Define a ROS publisher for this object if it doesn’t already exist
+                if (pose_publishers.find(object_name) == pose_publishers.end()) {
+                    pose_publishers[object_name] = nh.advertise<geometry_msgs::PoseStamped>(topic_name, 10);
+                }
+
+                // Prepare the PoseStamped message for ROS
                 geometry_msgs::PoseStamped pose_msg;
                 pose_msg.header.stamp = ros::Time::now();
+                pose_msg.header.frame_id = object_name;  // You could also set a generic frame ID like "vive" or "world"
                 pose_msg.pose.position.x = pose.Pos[0];
                 pose_msg.pose.position.y = pose.Pos[1];
                 pose_msg.pose.position.z = pose.Pos[2];
@@ -72,7 +88,8 @@ int main(int argc, char **argv) {
                 pose_msg.pose.orientation.z = pose.Rot[2];
                 pose_msg.pose.orientation.w = pose.Rot[3];
 
-                pose_pub.publish(pose_msg);
+                // Publish the pose data on the object's topic
+                pose_publishers[object_name].publish(pose_msg);
                 break;
             }
 
@@ -105,6 +122,8 @@ int main(int argc, char **argv) {
 
             case SurviveSimpleEventType_None:
                 break;
+            
+            //TODO: Check if we need to publish the velocity of the object
         }
 
         ros::spinOnce();
