@@ -15,6 +15,7 @@ def pose_callback(msg):
     transform.header.stamp = rospy.Time.now()
     transform.header.frame_id = "world"
     transform.child_frame_id = msg.header.frame_id
+    # transform.child_frame_id = "hand_base_link"
     # transform.child_frame_id = "tracker"
 
     # Set translation and rotation from pose
