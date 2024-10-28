@@ -6,6 +6,8 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/String.h>
 
+//TODO: Check why only one of the tracker can run without charging and what is the meaning of the tracker names
+
 // Keep the node running
 static volatile int keepRunning = 1;
 
@@ -57,7 +59,6 @@ int main(int argc, char **argv) {
     struct SurviveSimpleEvent event = {};
     while (ros::ok() && keepRunning && survive_simple_wait_for_event(actx, &event) != SurviveSimpleEventType_Shutdown) {
         switch (event.event_type) {
-            //TODO: Check if the published topic is correct
             case SurviveSimpleEventType_PoseUpdateEvent: {
                 const struct SurviveSimplePoseUpdatedEvent *pose_event = survive_simple_get_pose_updated_event(&event);
                 SurvivePose pose = pose_event->pose;
