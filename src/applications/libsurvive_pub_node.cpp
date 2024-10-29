@@ -74,10 +74,10 @@ int main(int argc, char **argv) {
                 pose_msg.pose.position.x = pose.Pos[0];
                 pose_msg.pose.position.y = pose.Pos[1];
                 pose_msg.pose.position.z = pose.Pos[2];
-                pose_msg.pose.orientation.x = pose.Rot[0];
-                pose_msg.pose.orientation.y = pose.Rot[1];
-                pose_msg.pose.orientation.z = pose.Rot[2];
-                pose_msg.pose.orientation.w = pose.Rot[3];
+                pose_msg.pose.orientation.w = pose.Rot[0];
+                pose_msg.pose.orientation.x = pose.Rot[1];
+                pose_msg.pose.orientation.y = pose.Rot[2];
+                pose_msg.pose.orientation.z = pose.Rot[3];
                 pose_pub.publish(pose_msg);
                 break;
             }
