@@ -15,7 +15,7 @@ use the command
 ```bash
 ./install
 ```
-Or 
+OR
 ```bash
 cd
 mkdir repos
@@ -40,4 +40,10 @@ catkin build
 1. Run the libsurvive node
 ```bash
 roslaunch vive_ros_libsurvive libsurvive_pub.launch RVIZ_ON:=True PATH_ON:=True
+```
+
+2. Troubleshooting
+if you find the tracker auto calibrating to some strange position, please use
+```bash
+./rm_cal.sh
 ```
