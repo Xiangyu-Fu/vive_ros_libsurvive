@@ -39,5 +39,5 @@ catkin build
 ## Usage
 1. Run the libsurvive node
 ```bash
-roslaunch vive_ros_libsurvive libsurvive_pub.launch
+roslaunch vive_ros_libsurvive libsurvive_pub.launch RVIZ_ON:=True PATH_ON:=True
 ```

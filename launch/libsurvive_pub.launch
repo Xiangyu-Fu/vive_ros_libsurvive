@@ -1,6 +1,12 @@
 <launch>
+  <!-- Define the PATH_ON and RVIZ_ON arguments -->
+  <arg name="PATH_ON" default="false" />
+  <arg name="RVIZ_ON" default="false" />
+
+  <!-- Main vive_ros_libsurvive node -->
   <node name="vive_ros_libsurvive" pkg="vive_ros_libsurvive" type="vive_ros_libsurvive_node" output="screen"/>
 
+  <!-- Pose to TF broadcaster node -->
   <node
       pkg="vive_ros_libsurvive"
       type="pose_to_tf_broadcaster.py"
@@ -9,6 +15,15 @@
       <param name="frame_id" value="world" />
   </node>
 
-  <!--rviz-->
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find vive_ros_libsurvive)/config/rviz/vive.rviz" />
+  <!-- Conditional RViz launch based on RVIZ_ON argument -->
+  <node if="$(arg RVIZ_ON)" pkg="rviz" type="rviz" name="rviz" args="-d $(find vive_ros_libsurvive)/config/rviz/vive.rviz" />
+
+  <!-- Trajectory server node, conditional on PATH_ON -->
+  <node if="$(arg PATH_ON)" name="trajectory_server" pkg="hector_trajectory_server" type="hector_trajectory_server" output="screen">
+    <!-- Topic to subscribe to for tracking poses -->
+    <param name="pose_update_topic" value="/survive/pose" />
+    <param name="target_frame_name" value="world" />
+    <param name="source_frame_name" value="KN0" />
+  </node>
+
 </launch>
