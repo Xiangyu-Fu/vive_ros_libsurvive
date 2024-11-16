@@ -3,9 +3,8 @@ This is a ROS package for HTC VIVE. It is based on the [libsurvive](https://gith
 
 ![](images/Screenshot%20from%202024-10-27%2015-31-07.png)
 
-
 ### Advantages:
-- No need for SteamVR
+- No need for SteamVR for running
 - simple setup
 - ...
 
@@ -35,6 +34,9 @@ git clone
 cd ..
 catkin build
 ```
+
+## Notice
+If you use [Dongle](https://tundra-labs.com/?srsltid=AfmBOopHBek6D9z68HtG2R4wa5UTrAS4LQfLOqxPkXbbKOc_oVi--y93), please pair the tracker to the Dongle using SteamVR first, then you can use the tracker without the HTC VIVE.
 
 ## Usage
 1. Run the libsurvive node
